@@ -29,6 +29,9 @@ const userSchema = new mongoose.Schema<IUser>(
       required: true,
       unique: true,
     },
+    accessToken: {
+      type: String,
+    },
     role: {
       type: String,
       enum: ["admin", "member"],

@@ -8,4 +8,5 @@ export interface IUser extends Document {
   password: string;
   phone: String;
   role: string;
+  accessToken: string
 }

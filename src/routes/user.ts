@@ -6,7 +6,7 @@ import updateProfile from "../controllers/user/update";
 
 const userRouter = express.Router();
 
-userRouter.get("/user", authenticate, authorization, getAllUser);
+userRouter.get("/user", getAllUser);
 userRouter.get("/user/profile/:id", getUserProfile);
 userRouter.get("/user/token/:token", getUserByToken);
 userRouter.patch("/user/update/:id", authenticate, updateProfile);

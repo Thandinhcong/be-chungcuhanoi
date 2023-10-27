@@ -80,7 +80,7 @@ export const signin = async (req: Request, res: Response) => {
         message: errors,
       });
     }
-    const user: IUser | null = await User.findOne({ email });
+    const user: IUser | null | any = await User.findOne({ email });
     if (!user) {
       return res
         .status(400)
@@ -103,7 +103,10 @@ export const signin = async (req: Request, res: Response) => {
       }
     );
 
-    res.status(200).json({
+    user.accessToken = token
+    user.save();
+
+    return res.status(200).json({
       success: true,
       message: "Đăng nhập thành công",
       // user: {

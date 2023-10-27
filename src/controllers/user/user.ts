@@ -101,7 +101,7 @@ export const getUserByToken = async (
   try {
     const { token } = req.params;
 
-    const user = await User.findOne({ token });
+    const user = await User.findOne({ accessToken:token });
     if (!user) {
       return res.status(404).json({
         error: true,
