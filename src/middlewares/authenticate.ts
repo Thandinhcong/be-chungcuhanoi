@@ -39,6 +39,7 @@ export const authenticate = async (req: any, res: any, next: NextFunction) => {
         }
 
         req.user = user;
+        req.tokenValue = payload;
         next();
       }
     ) as JwtPayload;

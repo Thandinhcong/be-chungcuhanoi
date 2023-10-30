@@ -1,68 +1,38 @@
-import jwt, { Secret } from "jsonwebtoken";
-import { refreshTokenSchema } from "../../schemas/refreshToken.js";
-import RefreshToken from "../../models/refreshToken.js";
-import Joi from "joi";
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import { Request, Response } from "express";
-import { IRefreshToken } from "../../interfaces/refreshToken .js";
-import { IUser } from "../../interfaces/user.js";
-import User from "../../models/user.js";
+import User from "../../models/user";
 
 export const refreshToken = async (req: Request, res: Response) => {
-  const { error } = refreshTokenSchema.validate(req.body, {
-    abortEarly: false,
-  });
-  if (error) {
-    return res.status(400).json({
-      messange: error.details.map(
-        (err: Joi.ValidationErrorItem) => err.message
-      ),
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) throw new Error("Bạn chưa đăng nhập");
+
+    const token = authHeader && (authHeader.split(" ")[1] as string);
+    const userId = jwt.verify(
+      token,
+      process.env.JWT_SECRET as Secret
+    ) as JwtPayload;
+
+    const user = await User.findById(userId?.["_id"]);
+
+    const newToken = jwt.sign({ user }, process.env.JWT_SECRET as Secret, {
+      expiresIn: "1m",
     });
-  }
 
-  const secretKey: string = process.env.JWT_SECRET!;
-
-  const token = await RefreshToken.findOne<IRefreshToken>(req.body);
-
-  const userExists = await User.findById(req.body.userId);
-  if (!userExists) {
-    return res.status(404).json({
-      error: true,
-      message: "Người dùng không tồn tại",
-    });
-  }
-
-  jwt.verify(
-    token?.refreshToken,
-    secretKey,
-    async (error: any, user: IUser) => {
-      if (error) {
-        if (error.name === "JsonWebTokenError") {
-          return res.status(400).json({
-            success: false,
-            message: "Token không hợp lệ",
-          });
-        }
-        if (error.name === "TokenExpiredError") {
-          return res.status(400).json({
-            success: false,
-            message: "Token đã hết hạn",
-          });
-        }
+    const refreshToken = jwt.sign(
+      { _id: user?.["_id"] },
+      process.env.JWT_SECRET as Secret,
+      {
+        expiresIn: "30d",
       }
+    );
 
-      const token = jwt.sign(
-        { user: user?.["user"] },
-        process.env.JWT_SECRET as Secret,
-        {
-          expiresIn: "7d",
-        }
-      );
-
-      res.status(200).json({
-        success: true,
-        message: "Đăng nhập thành công",
-        token,
-      });
-    }
-  );
+    return res.status(200).json({
+      success: true,
+      token: newToken,
+      refreshToken,
+    });
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
 };

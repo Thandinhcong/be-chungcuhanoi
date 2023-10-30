@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import User from "../../models/user";
 import { IUser } from "../../interfaces/user";
-import RefreshToken from "../../models/refreshToken.js";
 import bcrypt from "bcryptjs";
 import { userSchema } from "../../schemas/user";
 import jwt, { Secret } from "jsonwebtoken";
@@ -69,27 +68,22 @@ const updateProfile = async (req: Request, res: Response) => {
       });
     }
 
-    const token = jwt.sign(
-      { productUpdate },
-      process.env.JWT_SECRET as Secret,
-      {
-        expiresIn: "7d",
-      }
-    );
+    const token = jwt.sign({ user }, process.env.JWT_SECRET as Secret, {
+      expiresIn: "7d",
+    });
     const refreshToken = jwt.sign(
-      { productUpdate },
+      { _id: user._id },
       process.env.JWT_SECRET as Secret,
       {
         expiresIn: "30d",
       }
     );
 
-    await RefreshToken.updateMany({ userId: productUpdate._id }, refreshToken);
-
     return res.status(200).json({
       success: true,
       message: "Cập nhật tài khoản thành công",
       token,
+      refreshToken,
     });
   } catch (error) {
     return res.status(400).json({ message: error.message });

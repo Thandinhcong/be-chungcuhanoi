@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt, { Secret } from "jsonwebtoken";
 import User from "../../models/user";
-import RefreshToken from "../../models/refreshToken.js";
 import { signInSchema, signupSchema } from "../../schemas/auth";
 import { IUser } from "../../interfaces/user";
 import dotenv from "dotenv";
@@ -50,17 +49,19 @@ export const signup = async (
     const token = jwt.sign({ user }, process.env.JWT_SECRET as Secret, {
       expiresIn: "7d",
     });
-
-    const refreshToken = jwt.sign({ user }, process.env.JWT_SECRET as Secret, {
-      expiresIn: "30d",
-    });
-
-    await RefreshToken.create({ userId: user._id, refreshToken });
+    const refreshToken = jwt.sign(
+      { _id: user._id },
+      process.env.JWT_SECRET as Secret,
+      {
+        expiresIn: "30d",
+      }
+    );
 
     return res.status(201).json({
       success: true,
       message: "Đăng ký thành công",
       token,
+      refreshToken,
     });
   } catch (error) {
     return res.status(400).json({ message: error.message });
@@ -96,16 +97,20 @@ export const signin = async (req: Request, res: Response) => {
     const token = jwt.sign({ user }, process.env.JWT_SECRET as Secret, {
       expiresIn: "7d",
     });
-    const refreshToken = jwt.sign({ user }, process.env.JWT_SECRET as Secret, {
-      expiresIn: "30d",
-    });
 
-    await RefreshToken.updateMany({ userId: user._id }, refreshToken);
+    const refreshToken = jwt.sign(
+      { _id: user._id },
+      process.env.JWT_SECRET as Secret,
+      {
+        expiresIn: "30d",
+      }
+    );
 
     res.status(200).json({
       success: true,
       message: "Đăng nhập thành công",
       token,
+      refreshToken,
     });
   } catch (error) {
     return res.status(400).json({ message: error.message });

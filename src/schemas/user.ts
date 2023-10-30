@@ -20,9 +20,9 @@ export const userSchema = Joi.object({
     .pattern(/((( +|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/)
     .required()
     .messages({
-      "any.required": `"Số điện thoại" là trường bắt buộc`,
-      "string.empty": `"Số điện thoại" không được bỏ trống`,
-      "string.pattern.base": `"Số điện thoại" không hợp lệ`,
+      "any.required": `"phone" là trường bắt buộc`,
+      "string.empty": `"phone" không được bỏ trống`,
+      "string.pattern.base": `"phone" không hợp lệ`,
     }),
   password: Joi.string().min(6).required().messages({
     "string.base": `"password" phải là kiểu "text"`,

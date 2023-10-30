@@ -6,6 +6,6 @@ const authRouter: Router = express.Router();
 
 authRouter.post("/signup", signup);
 authRouter.post("/signin", signin);
-authRouter.post("/refreshToken", refreshToken);
+authRouter.post("/user/refreshToken", refreshToken);
 
 export default authRouter;
