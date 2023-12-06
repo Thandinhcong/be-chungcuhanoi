@@ -1,6 +1,6 @@
 
-import Category from "../../models/category.js";
-import Project from "../../models/project.js";
+import Category from "../../models/category";
+import Project from "../../models/project";
 
 
 export const remove = async (req, res) => {
@@ -13,8 +13,8 @@ export const remove = async (req, res) => {
             });
         }
         await Project.updateMany(
-          { categoryId: category._id },
-          { categoryId: null }
+            { categoryId: category._id },
+            { categoryId: null }
         );
         return res.status(200).json({
             message: "Xóa danh mục thành công",

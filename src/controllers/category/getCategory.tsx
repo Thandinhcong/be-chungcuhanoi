@@ -1,5 +1,5 @@
-import { IprojectResponse } from "../../interfaces/project.js";
-import Category from "../../models/category.js";
+import { IprojectResponse } from "../../interfaces/project";
+import Category from "../../models/category";
 
 
 
@@ -15,7 +15,7 @@ export const getAllCategory = async (req, res) => {
     page: _page,
     sort: { [_sort as string]: _order === "asc" ? -1 : 1 },
     limit: _limit,
-};
+  };
   try {
     const category = await Category.paginate({}, options) as any;
     if (category.length === 0) {
@@ -26,11 +26,11 @@ export const getAllCategory = async (req, res) => {
     const response: IprojectResponse = {
       data: category.docs,
       pagination: {
-          currentPage: category.page,
-          totalPages: category.totalPages,
-          totalItems: category.totalDocs,
+        currentPage: category.page,
+        totalPages: category.totalPages,
+        totalItems: category.totalDocs,
       },
-  };
+    };
     return res.status(200).json({
       message: "Lấy tất cả danh mục thành công!",
       response,

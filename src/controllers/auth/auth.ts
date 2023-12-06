@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt, { Secret } from "jsonwebtoken";
 import User from "../../models/user";
-import RefreshToken from "../../models/refreshToken.js";
+import RefreshToken from "../../models/refreshToken";
 import { signInSchema, signupSchema } from "../../schemas/auth";
 import { IUser } from "../../interfaces/user";
 import dotenv from "dotenv";

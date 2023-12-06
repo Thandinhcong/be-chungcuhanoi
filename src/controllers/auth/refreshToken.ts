@@ -1,11 +1,12 @@
 import jwt, { Secret } from "jsonwebtoken";
-import { refreshTokenSchema } from "../../schemas/refreshToken.js";
-import RefreshToken from "../../models/refreshToken.js";
+import { refreshTokenSchema } from "../../schemas/refreshToken";
+import RefreshToken from "../../models/refreshToken";
 import Joi from "joi";
 import { Request, Response } from "express";
-import { IRefreshToken } from "../../interfaces/refreshToken .js";
-import { IUser } from "../../interfaces/user.js";
-import User from "../../models/user.js";
+// import { IRefreshToken } from "../../interfaces/refreshToken";
+import { IUser } from "../../interfaces/user";
+import User from "../../models/user";
+import { IRefreshToken } from "../../interfaces/refreshToken ";
 
 export const refreshToken = async (req: Request, res: Response) => {
   const { error } = refreshTokenSchema.validate(req.body, {
